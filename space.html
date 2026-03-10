@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Space Explorer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#050505;
+color:white;
+text-align:center;
+}
+
+.header{
+background:#111;
+padding:15px;
+font-size:20px;
+}
+
+.card{
+background:#151515;
+margin:15px;
+padding:15px;
+border-radius:12px;
+}
+
+button{
+padding:8px 14px;
+border:none;
+border-radius:8px;
+background:#222;
+color:white;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+🛰 Space Explorer
+</div>
+
+<div class="card">
+<h3>ISS Location</h3>
+<p id="iss">Loading...</p>
+<button onclick="getISS()">Refresh</button>
+</div>
+
+<div class="card">
+<h3>Next Rocket Launch</h3>
+<p id="rocket">Loading...</p>
+<button onclick="getRocket()">Refresh</button>
+</div>
+
+<div class="card">
+<h3>Asteroid Info</h3>
+<p id="asteroid">Loading...</p>
+<button onclick="getAsteroid()">Refresh</button>
+</div>
+
+<div class="card">
+<button onclick="goHome()">⬅ Back</button>
+</div>
+
+<script>
+
+function goHome(){
+window.location.href="Explore.html"
+}
+
+function getISS(){
+
+fetch("https://api.wheretheiss.at/v1/satellites/25544")
+.then(r=>r.json())
+.then(data=>{
+
+document.getElementById("iss").innerHTML =
+"Latitude: " + data.latitude.toFixed(2) +
+"<br>Longitude: " + data.longitude.toFixed(2)
+
+})
+
+}
+
+getISS()
+
+function getRocket(){
+
+fetch("https://ll.thespacedevs.com/2.2.0/launch/upcoming/?limit=1")
+.then(r=>r.json())
+.then(data=>{
+
+let launch=data.results[0]
+
+document.getElementById("rocket").innerHTML =
+launch.name + "<br>" + launch.net
+
+})
+
+}
+
+getRocket()
+
+function getAsteroid(){
+
+fetch("https://api.nasa.gov/neo/rest/v1/feed/today?api_key=DEMO_KEY")
+.then(r=>r.json())
+.then(data=>{
+
+let day=Object.keys(data.near_earth_objects)[0]
+let ast=data.near_earth_objects[day][0]
+
+document.getElementById("asteroid").innerHTML =
+ast.name + "<br>Diameter: " +
+ast.estimated_diameter.meters.estimated_diameter_max.toFixed(0) + " m"
+
+})
+
+}
+
+getAsteroid()
+
+</script>
+
+</body>
+</html>

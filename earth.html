@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Earth Explorer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#050505;
+color:white;
+text-align:center;
+}
+
+.header{
+background:#111;
+padding:15px;
+font-size:20px;
+}
+
+.card{
+background:#151515;
+margin:15px;
+padding:15px;
+border-radius:12px;
+}
+
+button{
+padding:8px 14px;
+border:none;
+border-radius:8px;
+background:#222;
+color:white;
+cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+🌎 Earth Explorer
+</div>
+
+<div class="card">
+<h3>Latest Earthquake</h3>
+<p id="quake">Loading...</p>
+<button onclick="getQuake()">Refresh</button>
+</div>
+
+<div class="card">
+<h3>Volcano Info</h3>
+<p id="volcano">Loading...</p>
+<button onclick="getVolcano()">Refresh</button>
+</div>
+
+<div class="card">
+<h3>Weather</h3>
+<p id="weather">Loading...</p>
+<button onclick="getWeather()">Refresh</button>
+</div>
+
+<div class="card">
+<button onclick="goHome()">⬅ Back</button>
+</div>
+
+<script>
+
+function goHome(){
+window.location.href="Explore.html"
+}
+
+function getQuake(){
+
+fetch("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson")
+.then(r=>r.json())
+.then(data=>{
+
+let q=data.features[0]
+
+document.getElementById("quake").innerHTML =
+q.properties.place + "<br>Magnitude: " + q.properties.mag
+
+})
+
+}
+
+getQuake()
+
+function getVolcano(){
+
+document.getElementById("volcano").innerHTML =
+"Volcano monitoring coming soon 🌋"
+
+}
+
+function getWeather(){
+
+fetch("https://api.open-meteo.com/v1/forecast?latitude=28.6&longitude=77.2&current_weather=true")
+.then(r=>r.json())
+.then(data=>{
+
+document.getElementById("weather").innerHTML =
+"Temperature: " + data.current_weather.temperature + "°C"
+
+})
+
+}
+
+getWeather()
+
+</script>
+
+</body>
+</html>

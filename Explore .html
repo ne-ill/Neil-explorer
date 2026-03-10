@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<title>Neill Studio Explorer</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="manifest" href="manifest.json">
+
+<script src="https://unpkg.com/globe.gl"></script>
+
+<style>
+
+body{
+margin:0;
+background:black;
+color:white;
+font-family:Arial;
+overflow:hidden;
+}
+
+#globe{
+width:100vw;
+height:100vh;
+}
+
+.panel{
+position:absolute;
+top:20px;
+left:20px;
+background:#111;
+padding:15px;
+border-radius:10px;
+width:230px;
+box-shadow:0 0 10px black;
+}
+
+.title{
+font-size:18px;
+margin-bottom:10px;
+}
+
+.module{
+padding:10px;
+margin:6px 0;
+background:#222;
+border-radius:6px;
+cursor:pointer;
+}
+
+.module:hover{
+background:#333;
+}
+
+.launch{
+margin-top:10px;
+font-size:13px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="globe"></div>
+
+<div class="panel">
+
+<div class="title">🌍 Neill Studio Explorer</div>
+
+<div class="module" onclick="openSolar()">🪐 Solar System</div>
+<div class="module" onclick="openSpace()">🛰 Space Explorer</div>
+<div class="module" onclick="openEarth()">🌎 Earth Explorer</div>
+<div class="module" onclick="openSignals()">📡 Signal Network</div>
+<div class="module" onclick="openAI()">🤖 AI Assistant</div>
+
+<div class="launch">
+🚀 Next Launch:<br>
+<span id="launch">Loading...</span>
+</div>
+
+</div>
+
+<script>
+
+const globe = Globe()(document.getElementById("globe"))
+
+.globeImageUrl("https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg")
+.backgroundImageUrl("https://unpkg.com/three-globe/example/img/night-sky.png")
+
+// auto rotate globe
+
+let rotation = 0
+
+setInterval(()=>{
+
+rotation += 0.1
+
+globe.pointOfView({lat:0,lng:rotation,altitude:2})
+
+},50)
+
+
+// satellites
+
+let satellites=[]
+
+for(let i=0;i<12;i++){
+
+satellites.push({
+
+lat:(Math.random()*180)-90,
+lng:(Math.random()*360)-180,
+size:0.3,
+color:"white"
+
+})
+
+}
+
+
+// starlink constellation
+
+let starlink=[]
+
+for(let i=0;i<200;i++){
+
+starlink.push({
+
+lat:(Math.random()*180)-90,
+lng:(Math.random()*360)-180,
+size:0.12,
+color:"cyan"
+
+})
+
+}
+
+
+// asteroids
+
+let asteroids=[]
+
+for(let i=0;i<6;i++){
+
+asteroids.push({
+
+lat:(Math.random()*180)-90,
+lng:(Math.random()*360)-180,
+size:0.4,
+color:"purple"
+
+})
+
+}
+
+
+// asteroid movement
+
+setInterval(()=>{
+
+asteroids.forEach(a=>{
+
+a.lng += 0.2
+a.lat += 0.05
+
+})
+
+updatePoints()
+
+},120)
+
+
+// satellite movement
+
+setInterval(()=>{
+
+satellites.forEach(s=>{
+
+s.lng += 0.3
+
+})
+
+updatePoints()
+
+},100)
+
+
+// earthquakes
+
+let quakes=[]
+
+async function loadQuakes(){
+
+let res = await fetch(
+"https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson"
+)
+
+let data = await res.json()
+
+data.features.slice(0,20).forEach(q=>{
+
+quakes.push({
+
+lat:q.geometry.coordinates[1],
+lng:q.geometry.coordinates[0],
+size:0.45,
+color:"red"
+
+})
+
+})
+
+updatePoints()
+
+}
+
+loadQuakes()
+
+
+// ISS tracking
+
+let iss=[{lat:0,lng:0,size:0.6,color:"yellow"}]
+
+async function updateISS(){
+
+let res = await fetch("https://api.wheretheiss.at/v1/satellites/25544")
+
+let data = await res.json()
+
+iss[0].lat = data.latitude
+iss[0].lng = data.longitude
+
+updatePoints()
+
+}
+
+setInterval(updateISS,4000)
+
+updateISS()
+
+
+// update globe
+
+function updatePoints(){
+
+globe.pointsData(
+
+iss
+.concat(satellites)
+.concat(asteroids)
+.concat(starlink)
+.concat(quakes)
+
+)
+
+.pointAltitude("size")
+.pointColor("color")
+
+}
+
+updatePoints()
+
+
+// rocket countdown
+
+async function loadLaunch(){
+
+let res = await fetch(
+"https://ll.thespacedevs.com/2.2.0/launch/upcoming/?limit=1"
+)
+
+let data = await res.json()
+
+let launch = data.results[0]
+
+let time = new Date(launch.net).getTime()
+
+setInterval(()=>{
+
+let diff = time - Date.now()
+
+let h = Math.floor(diff/3600000)
+let m = Math.floor(diff/60000)%60
+let s = Math.floor(diff/1000)%60
+
+document.getElementById("launch").innerText =
+h+"h "+m+"m "+s+"s"
+
+},1000)
+
+}
+
+loadLaunch()
+
+
+// navigation
+
+function openSolar(){
+window.location.href="solar.html"
+}
+
+function openSpace(){
+window.location.href="space.html"
+}
+
+function openEarth(){
+window.location.href="earth.html"
+}
+
+function openSignals(){
+window.location.href="signals.html"
+}
+
+function openAI(){
+window.location.href="ai.html"
+}
+
+
+// PWA service worker
+
+if("serviceWorker" in navigator){
+
+navigator.serviceWorker.register("service-worker.js")
+
+}
+
+</script>
+
+</body>
+</html>

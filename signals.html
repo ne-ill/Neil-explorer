@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Signal Network Explorer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#050505;
+color:white;
+text-align:center;
+}
+
+.header{
+background:#111;
+padding:15px;
+font-size:20px;
+}
+
+.card{
+background:#151515;
+margin:15px;
+padding:15px;
+border-radius:12px;
+}
+
+.signal{
+font-size:30px;
+margin:10px;
+}
+
+button{
+padding:8px 14px;
+border:none;
+border-radius:8px;
+background:#222;
+color:white;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+📡 Signal Network Explorer
+</div>
+
+<div class="card">
+
+<h3>Radio Signal Strength</h3>
+
+<div id="radioSignal" class="signal">📶</div>
+
+<button onclick="scanRadio()">Scan Radio Signals</button>
+
+</div>
+
+<div class="card">
+
+<h3>Satellite Communication</h3>
+
+<p id="satellite">Scanning satellites...</p>
+
+<button onclick="scanSat()">Refresh</button>
+
+</div>
+
+<div class="card">
+
+<h3>Internet Network</h3>
+
+<p id="internet">Checking connection...</p>
+
+<button onclick="checkNet()">Check Network</button>
+
+</div>
+
+<div class="card">
+<button onclick="goHome()">⬅ Back</button>
+</div>
+
+<script>
+
+function goHome(){
+window.location.href="Explore.html"
+}
+
+function scanRadio(){
+
+let strength=Math.floor(Math.random()*5)+1
+
+let bars=""
+
+for(let i=0;i<strength;i++){
+bars+="📶 "
+}
+
+document.getElementById("radioSignal").innerHTML=bars
+
+}
+
+function scanSat(){
+
+let satellites=[
+"Starlink satellite detected 🛰",
+"Weather satellite active ☁",
+"GPS satellite connected 📍",
+"Communication satellite online 📡"
+]
+
+let sat=satellites[Math.floor(Math.random()*satellites.length)]
+
+document.getElementById("satellite").innerHTML=sat
+
+}
+
+function checkNet(){
+
+let speed=(Math.random()*100).toFixed(1)
+
+document.getElementById("internet").innerHTML=
+"Network speed: "+speed+" Mbps"
+
+}
+
+scanSat()
+checkNet()
+
+</script>
+
+</body>
+</html>

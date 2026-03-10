@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Solar System Viewer</title>
+
+<style>
+
+body{
+margin:0;
+background:black;
+color:white;
+font-family:Arial;
+overflow:hidden;
+}
+
+canvas{
+display:block;
+}
+
+.panel{
+position:absolute;
+top:20px;
+left:20px;
+background:#111;
+padding:12px;
+border-radius:8px;
+}
+
+button{
+padding:6px 10px;
+margin-top:8px;
+background:#222;
+color:white;
+border:none;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="panel">
+🪐 Solar System Viewer<br>
+<button onclick="goBack()">⬅ Back</button>
+</div>
+
+<canvas id="space"></canvas>
+
+<script>
+
+const canvas = document.getElementById("space")
+const ctx = canvas.getContext("2d")
+
+canvas.width = window.innerWidth
+canvas.height = window.innerHeight
+
+let angle = 0
+
+function draw(){
+
+ctx.fillStyle="black"
+ctx.fillRect(0,0,canvas.width,canvas.height)
+
+// sun
+ctx.beginPath()
+ctx.arc(canvas.width/2,canvas.height/2,20,0,Math.PI*2)
+ctx.fillStyle="yellow"
+ctx.fill()
+
+// earth orbit
+let earthX = canvas.width/2 + Math.cos(angle)*200
+let earthY = canvas.height/2 + Math.sin(angle)*200
+
+ctx.beginPath()
+ctx.arc(earthX,earthY,8,0,Math.PI*2)
+ctx.fillStyle="blue"
+ctx.fill()
+
+// mars orbit
+let marsX = canvas.width/2 + Math.cos(angle*0.8)*300
+let marsY = canvas.height/2 + Math.sin(angle*0.8)*300
+
+ctx.beginPath()
+ctx.arc(marsX,marsY,7,0,Math.PI*2)
+ctx.fillStyle="red"
+ctx.fill()
+
+angle += 0.01
+
+requestAnimationFrame(draw)
+
+}
+
+draw()
+
+function goBack(){
+window.location.href="Explore.html"
+}
+
+</script>
+
+</body>
+</html>
